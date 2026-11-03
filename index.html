@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Interaktif Matematika: Perpangkatan & Bentuk Akar (Smartboard Edition)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- KaTeX for crisp Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#4F46E5',
+                            green: '#10B981',
+                            blue: '#0284C7',
+                            orange: '#F97316'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-score': 'floatUp 0.8s ease-out forwards',
+                        'shake': 'shake 0.4s ease-in-out'
+                    },
+                    keyframes: {
+                        floatUp: {
+                            '0%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                            '100%': { opacity: '0', transform: 'translateY(-40px) scale(1.3)' }
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '20%, 60%': { transform: 'translateX(-8px)' },
+                            '40%, 80%': { transform: 'translateX(8px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        .touch-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .touch-btn:active {
+            transform: scale(0.94);
+        }
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94A3B8;
+            border-radius: 5px;
+        }
+        .math-box {
+            font-size: 1.4rem;
+        }
+        @media (min-width: 768px) {
+            .math-box {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER / TOP NAV BAR (SMARTBOARD OPTIMIZED) -->
+    <header class="bg-white border-b-2 border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- App Logo / Title -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchModule('modul-peta-konsep')">
+                <div class="bg-indigo-600 text-white p-3 rounded-2xl shadow-md flex items-center justify-center">
+                    <i class="fa-solid font-bold text-xl md:text-2xl fa-square-root-variable"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl text-slate-800 leading-tight">MATEMATIKA KELAS 8</h1>
+                    <p class="text-xs md:text-sm font-semibold text-indigo-600">Perpangkatan & Bentuk Akar</p>
+                </div>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="openTutorialModal()" class="touch-btn bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold px-3 py-2 md:px-4 md:py-2 rounded-xl flex items-center gap-2 border border-amber-300 text-xs md:text-sm shadow-sm">
+                    <i class="fa-solid fa-circle-question text-amber-600 text-base"></i>
+                    <span>Panduan & Cara Bermain</span>
+                </button>
+
+                <button onclick="switchModule('modul-peta-konsep')" class="touch-btn bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-2 md:px-4 md:py-2 rounded-xl flex items-center gap-2 border border-indigo-200 text-xs md:text-sm">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span class="hidden sm:inline">Peta Konsep</span>
+                </button>
+                
+                <button onclick="toggleAudio()" id="audioToggleBtn" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 md:p-2.5 rounded-xl border border-slate-300 text-base" title="Efek Suara">
+                    <i class="fa-solid fa-volume-high text-emerald-600" id="audioIcon"></i>
+                </button>
+
+                <button onclick="toggleFullscreen()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 md:p-2.5 rounded-xl border border-slate-300 text-base" title="Layar Penuh Smartboard">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MODULE QUICK NAVIGATION BAR -->
+    <nav class="bg-slate-800 text-white shadow-inner overflow-x-auto py-2.5 px-4 sticky top-[69px] z-30">
+        <div class="max-w-7xl mx-auto flex items-center justify-start md:justify-center gap-2 min-w-max">
+            <button onclick="switchModule('modul-peta-konsep')" id="nav-modul-peta-konsep" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-indigo-600 text-white">
+                <i class="fa-solid fa-diagram-project"></i> Peta Konsep Utama
+            </button>
+            <div class="h-5 w-px bg-slate-600"></div>
+            <button onclick="switchModule('modul-pangkat')" id="nav-modul-pangkat" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200">
+                <i class="fa-solid fa-bolt"></i> 1. Bilangan Berpangkat
+            </button>
+            <button onclick="switchModule('modul-akar')" id="nav-modul-akar" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200">
+                <i class="fa-solid fa-square-root-variable"></i> 2. Bilangan Bentuk Akar
+            </button>
+            <button onclick="switchModule('modul-rasional')" id="nav-modul-rasional" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200">
+                <i class="fa-solid fa-divide"></i> 3. Merasionalkan Penyebut
+            </button>
+            <button onclick="switchModule('modul-baku')" id="nav-modul-baku" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-200">
+                <i class="fa-solid fa-arrow-right-to-city"></i> 4. Penulisan Bentuk Baku
+            </button>
+            <button onclick="switchModule('modul-game')" id="nav-modul-game" class="nav-tab px-4 py-2 rounded-lg font-bold text-xs md:text-sm transition flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold shadow-sm">
+                <i class="fa-solid fa-gamepad"></i> 5. Game Papan Interaktif
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN DISPLAY CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 0: PETA KONSEP UTAMA (SESUAI HIRARKI GAMBAR DI DIAGRAM) -->
+        <!-- ========================================================================= -->
+        <section id="modul-peta-konsep" class="module-section block space-y-6">
+            <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-slate-200">
+                <div class="text-center max-w-3xl mx-auto mb-8">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs md:text-sm font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">Navigasi Peta Konsep Interaktif</span>
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-slate-900 mt-2">Perpangkatan dan Bentuk Akar</h2>
+                    <p class="text-slate-600 text-sm md:text-base mt-2">Sentuh kotak materi pada papan interaktif di bawah ini untuk memulai eksplorasi konsep matematika secara mandiri atau bersama guru!</p>
+                </div>
+
+                <!-- DIAGRAM GRAPHIC STRUCTURE -->
+                <div class="flex flex-col items-center justify-center space-y-6 my-4 py-2 overflow-x-auto">
+                    <!-- ROOT NODE (PURPLE) -->
+                    <div class="w-full max-w-sm">
+                        <button onclick="switchModule('modul-pangkat')" class="touch-btn w-full bg-indigo-700 hover:bg-indigo-800 text-white font-extrabold text-lg md:text-xl py-4 px-6 rounded-2xl shadow-xl flex items-center justify-center gap-3 border-2 border-indigo-400 group relative">
+                            <i class="fa-solid fa-tree text-2xl group-hover:scale-110 transition"></i>
+                            <span>Berpangkatan dan Bentuk Akar</span>
+                            <span class="absolute -top-3 -right-2 bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-0.5 rounded-full shadow">Mulai Konsep</span>
+                        </button>
+                    </div>
+
+                    <!-- CONNECTOR DOWN -->
+                    <div class="w-1 h-8 bg-indigo-400"></div>
+
+                    <!-- SECOND TIER: THREE MAIN BRANCHES -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                        
+                        <!-- BRANCH 1: BILANGAN BERPANGKAT -->
+                        <div class="flex flex-col items-center space-y-4 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200">
+                            <button onclick="switchModule('modul-pangkat')" class="touch-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base md:text-lg py-3 px-4 rounded-xl shadow-md text-center border-b-4 border-emerald-800">
+                                Bilangan Berpangkat
+                            </button>
+                            <div class="w-0.5 h-6 bg-emerald-400"></div>
+                            
+                            <div class="grid grid-cols-1 gap-2.5 w-full">
+                                <button onclick="switchModule('modul-pangkat', 'positif')" class="touch-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm py-2.5 px-3 rounded-lg text-center shadow-sm flex items-center justify-between">
+                                    <span>Pangkat Positif</span>
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                                <button onclick="switchModule('modul-pangkat', 'nol-negatif')" class="touch-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm py-2.5 px-3 rounded-lg text-center shadow-sm flex items-center justify-between">
+                                    <span>Pangkat 0 dan Negatif</span>
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                                <button onclick="switchModule('modul-pangkat', 'rasional')" class="touch-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm py-2.5 px-3 rounded-lg text-center shadow-sm flex items-center justify-between">
+                                    <span>Pangkat Rasional</span>
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+
+                            <div class="w-0.5 h-6 bg-amber-400"></div>
+                            <button onclick="switchModule('modul-pangkat', 'rasional')" class="touch-btn bg-amber-500 hover:bg-amber-600 text-slate-900 font-extrabold text-base py-2.5 px-6 rounded-xl shadow-md border-2 border-amber-300">
+                                <span class="katex-render" data-expr="a^{\frac{1}{2}} = \sqrt{a}"></span>
+                            </button>
+                        </div>
+
+                        <!-- BRANCH 2: BILANGAN BENTUK AKAR -->
+                        <div class="flex flex-col items-center space-y-4 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200">
+                            <button onclick="switchModule('modul-akar')" class="touch-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base md:text-lg py-3 px-4 rounded-xl shadow-md text-center border-b-4 border-emerald-800">
+                                Bilangan Bentuk Akar
+                            </button>
+                            <div class="w-0.5 h-6 bg-emerald-400"></div>
+
+                            <div class="grid grid-cols-1 gap-2.5 w-full">
+                                <button onclick="switchModule('modul-akar', 'operasi')" class="touch-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm py-2.5 px-3 rounded-lg text-center shadow-sm flex items-center justify-between">
+                                    <span>Operasi Bentuk Akar</span>
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                                <button onclick="switchModule('modul-rasional')" class="touch-btn bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm py-2.5 px-3 rounded-lg text-center shadow-sm flex items-center justify-between">
+                                    <span>Merasionalkan Penyebut</span>
+                                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- BRANCH 3: PENULISAN BENTUK BAKU -->
+                        <div class="flex flex-col items-center space-y-4 bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200">
+                            <button onclick="switchModule('modul-baku')" class="touch-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base md:text-lg py-3 px-4 rounded-xl shadow-md text-center border-b-4 border-emerald-800">
+                                Penulisan Bentuk Baku
+                            </button>
+                            <div class="p-4 bg-white rounded-xl border border-emerald-200 text-center w-full shadow-sm mt-2 space-y-2">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Notasi Ilmiah</p>
+                                <div class="katex-render text-indigo-700 font-bold" data-expr="a \times 10^n"></div>
+                                <p class="text-xs text-slate-600 font-semibold"><span class="katex-render" data-expr="1 \le a < 10"></span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 1: BILANGAN BERPANGKAT -->
+        <!-- ========================================================================= -->
+        <section id="modul-pangkat" class="module-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-emerald-800 text-emerald-200 text-xs font-bold px-3 py-1 rounded-full uppercase">Modul 1</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-1">Bilangan Berpangkat</h2>
+                    <p class="text-emerald-100 text-sm md:text-base">Pahami perkalian berulang, pangkat nol, pangkat negatif, dan pangkat rasional.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 bg-emerald-800/60 p-1.5 rounded-2xl w-full md:w-auto">
+                    <button onclick="setSubTab('pangkat', 'positif')" id="subtab-pangkat-positif" class="subtab-btn flex-1 md:flex-none px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-emerald-900 shadow">Positif</button>
+                    <button onclick="setSubTab('pangkat', 'nol-negatif')" id="subtab-pangkat-nol-negatif" class="subtab-btn flex-1 md:flex-none px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-white hover:bg-emerald-700">0 & Negatif</button>
+                    <button onclick="setSubTab('pangkat', 'rasional')" id="subtab-pangkat-rasional" class="subtab-btn flex-1 md:flex-none px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-white hover:bg-emerald-700">Rasional (1/2)</button>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 1: PANGKAT POSITIF -->
+            <div id="content-pangkat-positif" class="subcontent-pangkat space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-emerald-600"></i> Visualisator Perkalian Berulang
+                            </h3>
+                            <p class="text-sm text-slate-600 mb-6">Atur basis (<span class="katex-render" data-expr="a"></span>) dan eksponen (<span class="katex-render" data-expr="n"></span>) menggunakan tombol besar untuk Smartboard.</p>
+                            
+                            <div class="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                <div>
+                                    <label class="font-bold text-sm text-slate-700 flex justify-between">
+                                        <span>Basis (<span class="katex-render" data-expr="a"></span>):</span>
+                                        <span id="val-base" class="text-indigo-600 font-extrabold text-lg">3</span>
+                                    </label>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <button onclick="changeBase(-1)" class="touch-btn bg-indigo-600 text-white w-12 h-12 rounded-xl text-2xl font-black shadow flex items-center justify-center">-</button>
+                                        <input type="range" id="slider-base" min="1" max="10" value="3" oninput="updatePangkatPositif()" class="w-full h-3 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                                        <button onclick="changeBase(1)" class="touch-btn bg-indigo-600 text-white w-12 h-12 rounded-xl text-2xl font-black shadow flex items-center justify-center">+</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="font-bold text-sm text-slate-700 flex justify-between">
+                                        <span>Pangkat/Eksponen (<span class="katex-render" data-expr="n"></span>):</span>
+                                        <span id="val-exp" class="text-emerald-600 font-extrabold text-lg">4</span>
+                                    </label>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <button onclick="changeExp(-1)" class="touch-btn bg-emerald-600 text-white w-12 h-12 rounded-xl text-2xl font-black shadow flex items-center justify-center">-</button>
+                                        <input type="range" id="slider-exp" min="1" max="6" value="4" oninput="updatePangkatPositif()" class="w-full h-3 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-emerald-600">
+                                        <button onclick="changeExp(1)" class="touch-btn bg-emerald-600 text-white w-12 h-12 rounded-xl text-2xl font-black shadow flex items-center justify-center">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-6 bg-indigo-900 text-white rounded-2xl shadow-inner text-center">
+                            <div class="text-xs text-indigo-300 font-bold uppercase tracking-widest mb-1">Bentuk Perpangkatan</div>
+                            <div id="math-expression" class="text-3xl md:text-4xl font-extrabold my-2 text-amber-300"></div>
+                            <div id="math-expansion" class="text-lg md:text-xl text-indigo-100 font-medium overflow-x-auto py-2"></div>
+                            <div class="mt-3 pt-3 border-t border-indigo-700/60 flex items-center justify-center gap-2">
+                                <span class="text-sm text-indigo-200">Hasil Akhir = </span>
+                                <span id="math-result" class="text-2xl font-black text-emerald-400">81</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i> Konsep & Sifat Eksponen
+                            </h3>
+                            <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-slate-800 text-sm md:text-base leading-relaxed mb-4">
+                                <strong>Bilangan Berpangkat Positif</strong> adalah perkalian berulang bilangan <span class="katex-render" data-expr="a"></span> sebanyak <span class="katex-render" data-expr="n"></span> faktor.
+                                <div class="my-3 text-center p-3 bg-white rounded-xl shadow-sm border border-amber-200">
+                                    <span class="katex-render text-lg font-bold" data-expr="a^n = \underbrace{a \times a \times \dots \times a}_{n \text{ faktor}}"></span>
+                                </div>
+                            </div>
+
+                            <h4 class="font-bold text-slate-800 text-base mb-2">Sifat Utama:</h4>
+                            <div class="space-y-2 text-xs md:text-sm">
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                                    <span>Perkalian Basis Sama:</span>
+                                    <span class="katex-render font-bold text-indigo-700" data-expr="a^m \times a^n = a^{m+n}"></span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                                    <span>Pembagian Basis Sama:</span>
+                                    <span class="katex-render font-bold text-indigo-700" data-expr="\frac{a^m}{a^n} = a^{m-n}"></span>
+                                </div>
+                                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                                    <span>Pangkat Dipangkatkan:</span>
+                                    <span class="katex-render font-bold text-indigo-700" data-expr="(a^m)^n = a^{m \times n}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+                            <p class="font-bold text-sm text-emerald-900 mb-2">Uji Pemahaman Cepat:</p>
+                            <p class="text-xs md:text-sm text-slate-700 mb-3">Berapakah nilai dari <span class="katex-render" data-expr="2^3 \times 2^2"></span>?</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="checkAnswer(this, false, 'Ingat sifat a^m * a^n = a^(m+n), jadi 2^(3+2) = 2^5 = 32')" class="touch-btn bg-white hover:bg-slate-100 text-slate-800 font-bold py-2 rounded-lg border border-slate-300 text-sm">25</button>
+                                <button onclick="checkAnswer(this, true, 'Tepat sekali! 2^3 * 2^2 = 2^(3+2) = 2^5 = 32')" class="touch-btn bg-white hover:bg-slate-100 text-slate-800 font-bold py-2 rounded-lg border border-slate-300 text-sm">32</button>
+                                <button onclick="checkAnswer(this, false, 'Perhatikan bahwa pangkatnya dijumlahkan, bukan dikalikan!')" class="touch-btn bg-white hover:bg-slate-100 text-slate-800 font-bold py-2 rounded-lg border border-slate-300 text-sm">64</button>
+                            </div>
+                            <div class="quiz-feedback hidden mt-3 p-2.5 rounded-xl text-xs font-semibold"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 2: PANGKAT 0 DAN NEGATIF -->
+            <div id="content-pangkat-nol-negatif" class="subcontent-pangkat hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-down-short-wide text-indigo-600"></i> Mengapa <span class="katex-render" data-expr="a^0 = 1"></span> dan <span class="katex-render" data-expr="a^{-n} = \frac{1}{a^n}"></span>?
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-6">Geser slider di bawah ini untuk melihat pembuktian intuitif pembagian berurutan.</p>
+
+                    <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-200 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-indigo-900 text-sm md:text-base">Langkah Pola Pembagian (Basis 2):</span>
+                            <span id="pattern-step-label" class="bg-indigo-600 text-white font-black text-sm px-3 py-1 rounded-full">Langkah 4</span>
+                        </div>
+
+                        <input type="range" id="pattern-slider" min="0" max="5" value="3" oninput="updatePangkatPattern()" class="w-full h-4 bg-indigo-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+
+                        <div class="grid grid-cols-6 gap-2 text-center overflow-x-auto py-2">
+                            <div id="p-step-0" class="pattern-col p-3 rounded-xl border border-slate-200 bg-white">
+                                <div class="text-xs text-slate-500 font-bold">2<sup>3</sup></div>
+                                <div class="text-base font-extrabold text-slate-800">8</div>
+                            </div>
+                            <div id="p-step-1" class="pattern-col p-3 rounded-xl border border-slate-200 bg-white">
+                                <div class="text-xs text-slate-500 font-bold">2<sup>2</sup></div>
+                                <div class="text-base font-extrabold text-slate-800">4</div>
+                                <div class="text-[10px] text-emerald-600 font-bold">(: 2)</div>
+                            </div>
+                            <div id="p-step-2" class="pattern-col p-3 rounded-xl border border-slate-200 bg-white">
+                                <div class="text-xs text-slate-500 font-bold">2<sup>1</sup></div>
+                                <div class="text-base font-extrabold text-slate-800">2</div>
+                                <div class="text-[10px] text-emerald-600 font-bold">(: 2)</div>
+                            </div>
+                            <div id="p-step-3" class="pattern-col p-3 rounded-xl border-2 border-amber-500 bg-amber-50 shadow-md">
+                                <div class="text-xs text-amber-700 font-bold">2<sup>0</sup></div>
+                                <div class="text-lg font-black text-amber-900">1</div>
+                                <div class="text-[10px] text-emerald-600 font-bold">(: 2)</div>
+                            </div>
+                            <div id="p-step-4" class="pattern-col p-3 rounded-xl border-2 border-indigo-500 bg-indigo-50 shadow-md">
+                                <div class="text-xs text-indigo-700 font-bold">2<sup>-1</sup></div>
+                                <div class="text-base font-extrabold text-indigo-900">1/2</div>
+                                <div class="text-[10px] text-emerald-600 font-bold">(: 2)</div>
+                            </div>
+                            <div id="p-step-5" class="pattern-col p-3 rounded-xl border border-slate-200 bg-white">
+                                <div class="text-xs text-slate-500 font-bold">2<sup>-2</sup></div>
+                                <div class="text-base font-extrabold text-slate-800">1/4</div>
+                                <div class="text-[10px] text-emerald-600 font-bold">(: 2)</div>
+                            </div>
+                        </div>
+
+                        <div id="pattern-explanation" class="p-4 bg-white rounded-xl border border-indigo-200 text-sm text-slate-700 font-semibold leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 3: PANGKAT RASIONAL (1/2) -->
+            <div id="content-pangkat-rasional" class="subcontent-pangkat hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200">
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="text-center">
+                            <span class="bg-amber-100 text-amber-800 text-xs font-black px-3 py-1 rounded-full uppercase">Penghubung Peta Konsep</span>
+                            <h3 class="text-2xl font-extrabold text-slate-900 mt-2">Hubungan Pangkat Rasional <span class="katex-render" data-expr="a^{\frac{1}{2}}"></span> & Akar <span class="katex-render" data-expr="\sqrt{a}"></span></h3>
+                        </div>
+
+                        <div class="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-3xl space-y-4">
+                            <p class="text-slate-800 text-sm md:text-base leading-relaxed">
+                                Berdasarkan sifat eksponen: <span class="katex-render font-bold" data-expr="(a^{\frac{1}{2}})^2 = a^1 = a"></span>.
+                                <br>Sedangkan definisi dasar akar kuadrat adalah: <span class="katex-render font-bold" data-expr="(\sqrt{a})^2 = a"></span>.
+                            </p>
+                            <div class="p-4 bg-white rounded-2xl shadow-sm text-center border border-amber-200">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Kesimpulan Utama</p>
+                                <span class="katex-render text-2xl font-black text-amber-600" data-expr="a^{\frac{1}{2}} = \sqrt{a}"></span>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                            <h4 class="font-bold text-slate-800 text-base mb-3 text-center">Uji Coba Angka Interaktif:</h4>
+                            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <label class="font-bold text-sm text-slate-700">Pilih Angka (<span class="katex-render" data-expr="a"></span>):</label>
+                                <select id="rasional-num-select" onchange="calculateRasional()" class="bg-white border border-slate-300 font-bold text-slate-800 py-3 px-4 rounded-xl shadow-sm text-base">
+                                    <option value="4">4</option>
+                                    <option value="9" selected>9</option>
+                                    <option value="16">16</option>
+                                    <option value="25">25</option>
+                                    <option value="36">36</option>
+                                    <option value="49">49</option>
+                                    <option value="64">64</option>
+                                    <option value="81">81</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+
+                            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                                <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                    <p class="text-xs text-slate-500 font-bold">Bentuk Pangkat Rasional</p>
+                                    <div id="display-rasional-exp" class="text-xl font-bold text-indigo-600 my-1"></div>
+                                </div>
+                                <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                    <p class="text-xs text-slate-500 font-bold">Bentuk Akar Kuadrat</p>
+                                    <div id="display-rasional-sqrt" class="text-xl font-bold text-emerald-600 my-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 2: BILANGAN BENTUK AKAR -->
+        <!-- ========================================================================= -->
+        <section id="modul-akar" class="module-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-sky-600 to-indigo-700 text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="bg-sky-800 text-sky-200 text-xs font-bold px-3 py-1 rounded-full uppercase">Modul 2</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-1">Bilangan Bentuk Akar</h2>
+                    <p class="text-sky-100 text-sm md:text-base">Bedakan akar rasional vs bentuk akar irasional, penyederhanaan, dan operasinya.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 bg-sky-900/60 p-1.5 rounded-2xl w-full md:w-auto">
+                    <button onclick="setSubTab('akar', 'konsep')" id="subtab-akar-konsep" class="subtab-btn flex-1 md:flex-none px-3 py-2 rounded-xl text-xs md:text-sm font-bold bg-white text-sky-900 shadow">Konsep & Sederhana</button>
+                    <button onclick="setSubTab('akar', 'operasi')" id="subtab-akar-operasi" class="subtab-btn flex-1 md:flex-none px-3 py-2 rounded-xl text-xs md:text-sm font-bold text-white hover:bg-sky-700">Operasi Akar</button>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 1: KONSEP & SIMPLIFIER -->
+            <div id="content-akar-konsep" class="subcontent-akar space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-md border-l-8 border-emerald-500">
+                        <h4 class="font-extrabold text-lg text-emerald-800 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-check-circle"></i> Bukan Bentuk Akar (Rasional)
+                        </h4>
+                        <p class="text-xs md:text-sm text-slate-600 mb-3">Akar dari kuadrat sempurna yang menghasilkan bilangan bulat rasional.</p>
+                        <div class="p-3 bg-emerald-50 rounded-xl space-y-1 font-mono text-sm font-bold text-emerald-900">
+                            <div>• √25 = 5</div>
+                            <div>• √49 = 7</div>
+                            <div>• √100 = 10</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-md border-l-8 border-amber-500">
+                        <h4 class="font-extrabold text-lg text-amber-800 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Bentuk Akar (Irasional)
+                        </h4>
+                        <p class="text-xs md:text-sm text-slate-600 mb-3">Akar dari bilangan yang hasilnya desimal tak terbatas & tidak berulang.</p>
+                        <div class="p-3 bg-amber-50 rounded-xl space-y-1 font-mono text-sm font-bold text-amber-900">
+                            <div>• √2 ≈ 1,4142...</div>
+                            <div>• √3 ≈ 1,7320...</div>
+                            <div>• √7 ≈ 2,6457...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Simulator Menyederhanakan Akar
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-6">Pilih atau ketik angka untuk melihat pemecahan faktor kuadrat sempurna secara otomatis.</p>
+
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <span class="font-bold text-slate-700 text-sm">Contoh Soal:</span>
+                        <button onclick="simplifyRadical(72)" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-4 py-2 rounded-xl text-sm border border-slate-300">√72</button>
+                        <button onclick="simplifyRadical(48)" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-4 py-2 rounded-xl text-sm border border-slate-300">√48</button>
+                        <button onclick="simplifyRadical(50)" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-4 py-2 rounded-xl text-sm border border-slate-300">√50</button>
+                        <button onclick="simplifyRadical(108)" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-4 py-2 rounded-xl text-sm border border-slate-300">√108</button>
+                        
+                        <div class="flex items-center gap-2 ml-auto">
+                            <input type="number" id="custom-radical-input" placeholder="Angka" min="2" max="500" value="72" class="w-24 p-2.5 border border-slate-300 rounded-xl font-bold text-center text-sm">
+                            <button onclick="simplifyRadical(document.getElementById('custom-radical-input').value)" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow">Proses</button>
+                        </div>
+                    </div>
+
+                    <div id="radical-step-container" class="bg-indigo-950 text-white p-6 rounded-2xl shadow-inner space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 2: OPERASI AKAR -->
+            <div id="content-akar-operasi" class="subcontent-akar hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 space-y-6">
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calculator text-emerald-600"></i> Operasi Aljabar pada Bentuk Akar
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                            <div class="flex items-center gap-2 text-indigo-700 font-bold">
+                                <i class="fa-solid fa-plus-minus"></i>
+                                <span>1. Penjumlahan & Pengurangan</span>
+                            </div>
+                            <p class="text-xs text-slate-600">Hanya dapat dikelompokkan jika <strong>bilangan di dalam akar sejenis</strong>.</p>
+                            <div class="p-3 bg-white rounded-xl border border-slate-200 text-center font-bold">
+                                <span class="katex-render" data-expr="a\sqrt{c} \pm b\sqrt{c} = (a \pm b)\sqrt{c}"></span>
+                            </div>
+                            <div class="p-3 bg-indigo-50 text-indigo-900 rounded-xl text-xs space-y-1">
+                                <div><strong>Contoh:</strong> <span class="katex-render" data-expr="3\sqrt{2} + 5\sqrt{2} = (3+5)\sqrt{2} = 8\sqrt{2}"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                            <div class="flex items-center gap-2 text-indigo-700 font-bold">
+                                <i class="fa-solid fa-xmark"></i>
+                                <span>2. Perkalian & Pembagian</span>
+                            </div>
+                            <p class="text-xs text-slate-600">Dapat langsung dikalikan atau dibagi meskipun angka di dalam akar berbeda.</p>
+                            <div class="p-3 bg-white rounded-xl border border-slate-200 text-center font-bold">
+                                <span class="katex-render" data-expr="\sqrt{a} \times \sqrt{b} = \sqrt{a \times b}"></span>
+                            </div>
+                            <div class="p-3 bg-indigo-50 text-indigo-900 rounded-xl text-xs space-y-1">
+                                <div><strong>Contoh:</strong> <span class="katex-render" data-expr="\sqrt{3} \times \sqrt{5} = \sqrt{15}"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 3: MERASIONALKAN PENYEBUT -->
+        <!-- ========================================================================= -->
+        <section id="modul-rasional" class="module-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-purple-700 to-indigo-800 text-white p-6 rounded-3xl shadow-lg">
+                <span class="bg-purple-900 text-purple-200 text-xs font-bold px-3 py-1 rounded-full uppercase">Modul 3</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold mt-1">Merasionalkan Penyebut Bentuk Akar</h2>
+                <p class="text-purple-100 text-sm md:text-base">Mengubah pecahan berpenyebut akar irasional menjadi bentuk rasional yang lebih sederhana.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- TIPE 1 -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <h3 class="text-lg font-bold text-slate-900">Bentuk 1: <span class="katex-render" data-expr="\frac{a}{\sqrt{b}}"></span></h3>
+                        <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded-lg">Pengali <span class="katex-render" data-expr="\frac{\sqrt{b}}{\sqrt{b}}"></span></span>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-2xl space-y-3">
+                        <p class="text-xs text-slate-600 font-semibold">Simulasi Interaktif Ubah Nilai:</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-slate-700">Pembilang (a):</label>
+                                <input type="number" id="rasional-a" value="6" min="1" max="20" onchange="updateRasionalForm1()" class="w-full mt-1 p-2 border border-slate-300 rounded-lg text-center font-bold">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-700">Penyebut (√b):</label>
+                                <input type="number" id="rasional-b" value="3" min="2" max="20" onchange="updateRasionalForm1()" class="w-full mt-1 p-2 border border-slate-300 rounded-lg text-center font-bold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-indigo-900 text-white rounded-2xl shadow-inner text-center space-y-3">
+                        <div class="text-xs text-indigo-300 font-bold uppercase">Langkah Merasionalkan:</div>
+                        <div id="rasional-step-output" class="text-lg md:text-xl font-bold py-2"></div>
+                    </div>
+                </div>
+
+                <!-- TIPE 2 -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <h3 class="text-lg font-bold text-slate-900">Bentuk 2: Bentuk Sekawan</h3>
+                        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2.5 py-1 rounded-lg">Konjugat</span>
+                    </div>
+
+                    <p class="text-sm text-slate-600">Jika penyebut berupa <span class="katex-render" data-expr="(a + \sqrt{b})"></span>, kalikan pecahan dengan faktor sekawannya yaitu <span class="katex-render" data-expr="(a - \sqrt{b})"></span>.</p>
+
+                    <div class="p-4 bg-purple-50 border border-purple-200 rounded-2xl space-y-2">
+                        <p class="font-bold text-xs text-purple-900 uppercase">Rumus Utama Sekawan:</p>
+                        <div class="text-center py-2 bg-white rounded-xl shadow-sm">
+                            <span class="katex-render text-base md:text-lg font-bold text-purple-900" data-expr="\frac{c}{a + \sqrt{b}} \times \frac{a - \sqrt{b}}{a - \sqrt{b}} = \frac{c(a - \sqrt{b})}{a^2 - b}"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl text-xs space-y-2">
+                        <span class="font-bold text-slate-800">Contoh Papan Tulis:</span>
+                        <div class="katex-render text-slate-800 font-semibold" data-expr="\frac{4}{3 + \sqrt{5}} \times \frac{3 - \sqrt{5}}{3 - \sqrt{5}} = \frac{4(3 - \sqrt{5})}{9 - 5} = 3 - \sqrt{5}"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 4: PENULISAN BENTUK BAKU -->
+        <!-- ========================================================================= -->
+        <section id="modul-baku" class="module-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 p-6 rounded-3xl shadow-lg">
+                <span class="bg-slate-900 text-amber-400 text-xs font-black px-3 py-1 rounded-full uppercase">Modul 4</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold mt-1 text-white">Penulisan Bentuk Baku (Notasi Ilmiah)</h2>
+                <p class="text-amber-100 text-sm md:text-base">Menuliskan bilangan sangat besar atau sangat kecil secara presisi.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-200 space-y-6">
+                <div class="p-6 bg-slate-900 text-white rounded-2xl text-center space-y-2">
+                    <p class="text-xs text-amber-400 font-bold uppercase tracking-wider">Format Standar Bentuk Baku</p>
+                    <div class="text-3xl md:text-4xl font-extrabold text-amber-300">
+                        <span class="katex-render" data-expr="a \times 10^n"></span>
+                    </div>
+                    <p class="text-sm text-slate-300 mt-2">Syarat utama: <span class="katex-render text-amber-200 font-bold" data-expr="1 \le a < 10"></span> dan <span class="katex-render text-amber-200 font-bold" data-expr="n \in \mathbb{Z}"></span></p>
+                </div>
+
+                <div class="p-6 bg-amber-50/60 rounded-3xl border border-amber-200 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-hand-pointer text-amber-600"></i> Simulator Geser Desimal Smartboard
+                    </h3>
+
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs font-bold text-slate-600 self-center">Pilih Kasus:</span>
+                        <button onclick="setBakuPreset(350000000)" class="touch-btn bg-white hover:bg-slate-100 px-3 py-1.5 rounded-xl border text-xs font-bold shadow-sm">350.000.000 (Besar)</button>
+                        <button onclick="setBakuPreset(1250000)" class="touch-btn bg-white hover:bg-slate-100 px-3 py-1.5 rounded-xl border text-xs font-bold shadow-sm">1.250.000 (Sedang)</button>
+                        <button onclick="setBakuPreset(0.000045)" class="touch-btn bg-white hover:bg-slate-100 px-3 py-1.5 rounded-xl border text-xs font-bold shadow-sm">0,000045 (Kecil)</button>
+                        <button onclick="setBakuPreset(0.0000008)" class="touch-btn bg-white hover:bg-slate-100 px-3 py-1.5 rounded-xl border text-xs font-bold shadow-sm">0,0000008 (Mikro)</button>
+                    </div>
+
+                    <div class="p-6 bg-white rounded-2xl border border-amber-200 shadow-sm text-center space-y-4">
+                        <div class="text-xs text-slate-500 font-bold">Bilangan Asli:</div>
+                        <div id="baku-raw-number" class="text-2xl md:text-4xl font-extrabold text-slate-900 font-mono tracking-wider">350.000.000</div>
+
+                        <div class="flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrow-down-long text-amber-600 text-xl"></i>
+                            <span class="text-xs font-extrabold text-amber-800 bg-amber-100 px-3 py-1 rounded-full">Bentuk Baku Notasi Ilmiah</span>
+                            <i class="fa-solid fa-arrow-down-long text-amber-600 text-xl"></i>
+                        </div>
+
+                        <div id="baku-scientific-output" class="text-3xl md:text-4xl font-extrabold text-indigo-700 py-2"></div>
+                        <div id="baku-explanation" class="text-xs md:text-sm text-slate-600 font-semibold"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- MODULE 5: GAME PAPAN INTERAKTIF & BATTLE DUEL 2 PEMAIN -->
+        <!-- ========================================================================= -->
+        <section id="modul-game" class="module-section hidden space-y-6">
+            <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white p-6 rounded-3xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <span class="bg-slate-900 text-amber-300 text-xs font-black px-3 py-1 rounded-full uppercase">Modul 5</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-1">Game Papan Interaktif Kelas</h2>
+                    <p class="text-amber-100 text-sm md:text-base">Permainan interaktif untuk memperkuat pemahaman konsep di depan kelas!</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setGameMode('match')" id="btn-game-match" class="touch-btn bg-white text-slate-900 font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm">
+                        <i class="fa-solid fa-puzzle-piece text-amber-600"></i> Match Card
+                    </button>
+                    <button onclick="setGameMode('race')" id="btn-game-race" class="touch-btn bg-slate-800 hover:bg-slate-900 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm">
+                        <i class="fa-solid fa-trophy text-amber-400"></i> Battle Duel (2 Pemain)
+                    </button>
+                </div>
+            </div>
+
+            <!-- GAME 1: MATCH CARD GAME (DINAMIS ACAK) -->
+            <div id="game-view-match" class="game-view block bg-white p-6 rounded-3xl shadow-md border border-slate-200 space-y-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900">Pasangkan Kartu Bentuk Sederhana!</h3>
+                        <p class="text-xs text-slate-500">Sentuh soal di kiri, lalu sentuh jawaban yang cocok di kolom kanan.</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-500 font-bold block">Skor Kamu</span>
+                            <span id="match-score" class="text-2xl font-black text-emerald-600">0 / 4</span>
+                        </div>
+                        <button onclick="initMatchGame()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl shadow text-xs md:text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i>
+                            <span>Acak Ulang Game</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-700 text-sm uppercase tracking-wider text-center bg-indigo-50 text-indigo-900 py-2 rounded-xl border border-indigo-200">Kolom Soal</h4>
+                        <div id="match-questions-container" class="space-y-3"></div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-700 text-sm uppercase tracking-wider text-center bg-emerald-50 text-emerald-900 py-2 rounded-xl border border-emerald-200">Pilihan Jawaban</h4>
+                        <div id="match-answers-container" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GAME 2: SMARTBOARD DUAL BATTLE (SPLIT-SCREEN 2 SISWA BERSIAP DI DEPAN SMARTBOARD) -->
+            <div id="game-view-race" class="game-view hidden bg-slate-950 text-white p-4 md:p-6 rounded-3xl shadow-2xl space-y-4 border-4 border-slate-800 relative overflow-hidden">
+                
+                <!-- TOP GAME HEADER & TIMER -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase">DUEL 2 PEMAIN</span>
+                        <span id="duel-round-label" class="text-xs text-slate-400 font-bold">Ronde 1 / 10</span>
+                    </div>
+
+                    <!-- Countdown Timer -->
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-amber-400 text-lg"></i>
+                        <div class="w-32 bg-slate-800 rounded-full h-3.5 border border-slate-700 overflow-hidden">
+                            <div id="duel-timer-bar" class="bg-amber-400 h-full w-full transition-all duration-1000"></div>
+                        </div>
+                        <span id="duel-timer-text" class="font-mono font-black text-amber-300 text-base">15s</span>
+                    </div>
+
+                    <button onclick="resetRaceGame()" class="touch-btn bg-slate-800 hover:bg-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Duel
+                    </button>
+                </div>
+
+                <!-- QUESTION DISPLAY CARD (CENTER TOP) -->
+                <div class="bg-slate-900 border-2 border-indigo-500/40 p-5 rounded-2xl text-center space-y-2 shadow-xl">
+                    <span class="text-xs text-indigo-300 font-bold uppercase tracking-widest">Soal Duel Matematika:</span>
+                    <div id="race-question-text" class="text-2xl md:text-4xl font-black text-amber-300 py-1"></div>
+                </div>
+
+                <!-- DUAL CONTROLS SPLIT SCREEN LAYOUT -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                    <!-- CENTER DIVISION LINE FOR SMARTBOARD -->
+                    <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-slate-800 -translate-x-1/2 z-10 rounded-full"></div>
+
+                    <!-- LEFT SIDE: TIM MERAH (RED PLAYER) -->
+                    <div class="bg-gradient-to-b from-rose-950/80 to-slate-900 border-2 border-rose-600/60 p-4 md:p-5 rounded-2xl space-y-4 relative">
+                        <div class="flex items-center justify-between border-b border-rose-900/60 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-rose-500 animate-ping"></div>
+                                <h4 class="font-black text-rose-400 text-base md:text-lg">TIM MERAH (KIRI)</h4>
+                            </div>
+                            <div class="text-right relative">
+                                <span class="text-[10px] text-rose-300 font-bold block uppercase">SKOR</span>
+                                <span id="score-red" class="text-3xl font-black text-white">0</span>
+                                <!-- Floating Score Effect -->
+                                <div id="float-score-red" class="hidden absolute -top-4 right-0 text-amber-300 font-black text-xl animate-float-score">+100</div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-rose-200 font-semibold text-center bg-rose-900/40 py-1 rounded-lg">Sentuh pilihan di bawah ini untuk Tim Merah:</p>
+
+                        <!-- Red Team Options Grid -->
+                        <div id="options-red-grid" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+
+                    <!-- RIGHT SIDE: TIM BIRU (BLUE PLAYER) -->
+                    <div class="bg-gradient-to-b from-sky-950/80 to-slate-900 border-2 border-sky-600/60 p-4 md:p-5 rounded-2xl space-y-4 relative">
+                        <div class="flex items-center justify-between border-b border-sky-900/60 pb-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-sky-500 animate-ping"></div>
+                                <h4 class="font-black text-sky-400 text-base md:text-lg">TIM BIRU (KANAN)</h4>
+                            </div>
+                            <div class="text-right relative">
+                                <span class="text-[10px] text-sky-300 font-bold block uppercase">SKOR</span>
+                                <span id="score-blue" class="text-3xl font-black text-white">0</span>
+                                <!-- Floating Score Effect -->
+                                <div id="float-score-blue" class="hidden absolute -top-4 right-0 text-amber-300 font-black text-xl animate-float-score">+100</div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-sky-200 font-semibold text-center bg-sky-900/40 py-1 rounded-lg">Sentuh pilihan di bawah ini untuk Tim Biru:</p>
+
+                        <!-- Blue Team Options Grid -->
+                        <div id="options-blue-grid" class="grid grid-cols-2 gap-3"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- TUTORIAL & GUIDE MODAL DIALOG -->
+    <div id="tutorialModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-3xl w-full rounded-3xl shadow-2xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+            <div class="bg-indigo-600 text-white p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-amber-300"></i>
+                    <div>
+                        <h3 class="font-extrabold text-lg">Panduan Penggunaan & Cara Bermain</h3>
+                        <p class="text-xs text-indigo-200">Media Pembelajaran Interaktif Papan Tulis Digital Smartboard</p>
+                    </div>
+                </div>
+                <button onclick="closeTutorialModal()" class="touch-btn text-white hover:bg-indigo-700 p-2 rounded-xl text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 text-slate-700 text-sm">
+                <!-- Section 1 -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-base text-indigo-700 flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-project"></i> 1. Navigasi Peta Konsep
+                    </h4>
+                    <p class="leading-relaxed">Siswa atau guru dapat menyentuh setiap blok warna pada **Peta Konsep Utama** untuk berpindah secara terstruktur ke materi Pangkat Positif, Pangkat 0 & Negatif, Pangkat Rasional, Bentuk Akar, Merasionalkan Penyebut, dan Bentuk Baku.</p>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-base text-emerald-700 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> 2. Simulator & Eksplorasi Konsep (Modul 1-4)
+                    </h4>
+                    <p class="leading-relaxed">Gunakan tombol pengatur **+** / **-** atau slider besar untuk memanipulasi angka di papan tulis interaktif. Simulator akan secara otomatis mengkalkulasi dan menampilkan langkah pembongkaran faktor matematika secara *real-time*.</p>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-base text-amber-700 flex items-center gap-2">
+                        <i class="fa-solid fa-puzzle-piece"></i> 3. Game Match Card
+                    </h4>
+                    <p class="leading-relaxed">Satu orang siswa maju ke papan tulis. Sentuh kartu soal di kolom kiri, lalu pilih jawaban yang sesuai di kolom kanan. Klik tombol **"Acak Ulang Game"** untuk membangkitkan kombinasi soal baru secara acak.</p>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-base text-rose-700 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy"></i> 4. Game Battle Duel (2 Pemain Berdampingan)
+                    </h4>
+                    <p class="leading-relaxed">Dua orang siswa maju berdampingan ke depan papan digital (Siswa Kiri = **Tim Merah**, Siswa Kanan = **Tim Biru**):</p>
+                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                        <li>Soal tampil di bagian tengah atas papan tulis.</li>
+                        <li>Masing-masing tim memiliki 4 tombol jawaban terpisah di sisi wilayah layar mereka.</li>
+                        <li>Pemain yang pertama kali menyentuh jawaban BENAR akan memperoleh **+100 poin**!</li>
+                        <li>Game berlangsung selama 10 ronde dengan timer 15 detik per soal. Pemain dengan skor tertinggi di akhir ronde menjadi Pemenang!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-slate-100 p-4 text-center border-t border-slate-200">
+                <button onclick="closeTutorialModal()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold px-6 py-2.5 rounded-xl shadow">
+                    Mengerti, Siap Bermain!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINNER MODAL ANNOUNCEMENT FOR BATTLE DUEL -->
+    <div id="winnerModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-4 border-amber-400 max-w-lg w-full rounded-3xl p-6 text-center space-y-6 text-white shadow-2xl">
+            <i class="fa-solid fa-trophy text-6xl text-amber-400 animate-bounce"></i>
+            <div>
+                <span class="text-xs text-amber-300 font-bold uppercase tracking-widest">HASIL AKHIR DUEL</span>
+                <h3 id="winner-title" class="text-3xl font-black text-white mt-1">TIM MERAH MENANG!</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                <div class="text-center">
+                    <p class="text-xs text-rose-400 font-bold">TIM MERAH</p>
+                    <p id="final-score-red" class="text-3xl font-black text-white">0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-sky-400 font-bold">TIM BIRU</p>
+                    <p id="final-score-blue" class="text-3xl font-black text-white">0</p>
+                </div>
+            </div>
+
+            <button onclick="closeWinnerModal(); resetRaceGame();" class="touch-btn bg-amber-400 hover:bg-amber-500 text-slate-950 font-black px-8 py-3.5 rounded-2xl text-base shadow-xl w-full">
+                <i class="fa-solid fa-play mr-2"></i> Mainkan Duel Lagi!
+            </button>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // WEB AUDIO API SYNTHESIZER (NO EXTERNAL FILES REQUIRED)
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'correct') {
+                [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.type = 'triangle';
+                    o.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    g.gain.setValueAtTime(0.2, now + idx * 0.08);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+                    o.start(now + idx * 0.08);
+                    o.stop(now + idx * 0.08 + 0.3);
+                });
+            } else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        function playClick() { playSound('click'); }
+        function playCorrect() { playSound('correct'); }
+        function playWrong() { playSound('wrong'); }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audioIcon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-emerald-600';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-rose-500';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function openTutorialModal() {
+            playClick();
+            document.getElementById('tutorialModal').classList.remove('hidden');
+        }
+
+        function closeTutorialModal() {
+            playClick();
+            document.getElementById('tutorialModal').classList.add('hidden');
+        }
+
+        function closeWinnerModal() {
+            playClick();
+            document.getElementById('winnerModal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // MODULE NAVIGATION CONTROLLER (FIXED BLANK SCREEN ISSUE)
+        // ==========================================
+        function switchModule(modId, subTab = null) {
+            playClick();
+            
+            // Normalize module ID to avoid undefined errors
+            let targetId = modId.startsWith('modul-') ? modId : `modul-${modId}`;
+
+            // Hide all module sections
+            document.querySelectorAll('.module-section').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+
+            // Show target section safely
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            } else {
+                // Fallback to peta konsep if not found
+                document.getElementById('modul-peta-konsep').classList.remove('hidden');
+                targetId = 'modul-peta-konsep';
+            }
+
+            // Update Navbar Active Highlight
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('bg-indigo-600', 'text-white');
+                tab.classList.add('bg-slate-700', 'text-slate-200');
+            });
+
+            const activeTab = document.getElementById(`nav-${targetId}`);
+            if (activeTab) {
+                activeTab.classList.remove('bg-slate-700', 'text-slate-200');
+                activeTab.classList.add('bg-indigo-600', 'text-white');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (subTab) {
+                if (targetId === 'modul-pangkat') setSubTab('pangkat', subTab);
+                if (targetId === 'modul-akar') setSubTab('akar', subTab);
+            }
+
+            renderKaTeX();
+        }
+
+        function setSubTab(moduleName, subTabId) {
+            playClick();
+            document.querySelectorAll(`.subcontent-${moduleName}`).forEach(el => el.classList.add('hidden'));
+            
+            const targetContent = document.getElementById(`content-${moduleName}-${subTabId}`);
+            if (targetContent) targetContent.classList.remove('hidden');
+
+            document.querySelectorAll(`.subtab-btn`).forEach(btn => {
+                if (btn.id && btn.id.startsWith(`subtab-${moduleName}`)) {
+                    btn.classList.remove('bg-white', 'text-emerald-900', 'text-sky-900', 'shadow');
+                    btn.classList.add('text-white', 'hover:bg-emerald-700', 'hover:bg-sky-700');
+                }
+            });
+
+            const activeBtn = document.getElementById(`subtab-${moduleName}-${subTabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-white', 'hover:bg-emerald-700', 'hover:bg-sky-700');
+                activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow');
+            }
+
+            renderKaTeX();
+        }
+
+        // ==========================================
+        // MODUL 1: BILANGAN BERPANGKAT LOGIC
+        // ==========================================
+        function changeBase(delta) {
+            playClick();
+            const slider = document.getElementById('slider-base');
+            let val = parseInt(slider.value) + delta;
+            val = Math.max(1, Math.min(10, val));
+            slider.value = val;
+            updatePangkatPositif();
+        }
+
+        function changeExp(delta) {
+            playClick();
+            const slider = document.getElementById('slider-exp');
+            let val = parseInt(slider.value) + delta;
+            val = Math.max(1, Math.min(6, val));
+            slider.value = val;
+            updatePangkatPositif();
+        }
+
+        function updatePangkatPositif() {
+            const base = parseInt(document.getElementById('slider-base').value);
+            const exp = parseInt(document.getElementById('slider-exp').value);
+
+            document.getElementById('val-base').innerText = base;
+            document.getElementById('val-exp').innerText = exp;
+
+            const mathExpr = document.getElementById('math-expression');
+            const mathExpans = document.getElementById('math-expansion');
+            const mathRes = document.getElementById('math-result');
+
+            katex.render(`${base}^{${exp}}`, mathExpr);
+
+            let expansionArr = [];
+            for (let i = 0; i < exp; i++) expansionArr.push(base);
+            mathExpans.innerText = expansionArr.join(' × ');
+
+            const result = Math.pow(base, exp);
+            mathRes.innerText = result.toLocaleString('id-ID');
+        }
+
+        function updatePangkatPattern() {
+            const step = parseInt(document.getElementById('pattern-slider').value);
+            document.getElementById('pattern-step-label').innerText = `Langkah ${step + 1}`;
+
+            document.querySelectorAll('.pattern-col').forEach((col, idx) => {
+                if (idx === step) {
+                    col.classList.add('ring-4', 'ring-amber-400', 'scale-105');
+                } else {
+                    col.classList.remove('ring-4', 'ring-amber-400', 'scale-105');
+                }
+            });
+
+            const explanations = [
+                "Basis 2 pangkat 3 = 8.",
+                "8 dibagi 2 = 4 (Pangkat berkurang menjadi 2).",
+                "4 dibagi 2 = 2 (Pangkat berkurang menjadi 1).",
+                "<strong>Bukti Konseptual:</strong> 2 dibagi 2 = 1. Terbukti bahwa bilangan apapun dipangkatkan 0 bernilai 1 (a⁰ = 1).",
+                "<strong>Pangkat Negatif:</strong> 1 dibagi 2 = 1/2. Terbukti 2⁻¹ = 1/(2¹).",
+                "1/2 dibagi 2 = 1/4. Terbukti 2⁻² = 1/(2²) = 1/4."
+            ];
+
+            document.getElementById('pattern-explanation').innerHTML = explanations[step];
+        }
+
+        function calculateRasional() {
+            playClick();
+            const num = parseInt(document.getElementById('rasional-num-select').value);
+            const sqrtVal = Math.sqrt(num);
+
+            katex.render(`${num}^{\\frac{1}{2}} = ${sqrtVal}`, document.getElementById('display-rasional-exp'));
+            katex.render(`\\sqrt{${num}} = ${sqrtVal}`, document.getElementById('display-rasional-sqrt'));
+        }
+
+        // ==========================================
+        // MODUL 2: BENTUK AKAR SIMPLIFIER
+        // ==========================================
+        function simplifyRadical(num) {
+            playClick();
+            num = parseInt(num);
+            if (isNaN(num) || num < 2) return;
+
+            let largestSquare = 1;
+            let otherFactor = num;
+
+            for (let i = Math.floor(Math.sqrt(num)); i >= 1; i--) {
+                const sq = i * i;
+                if (num % sq === 0) {
+                    largestSquare = sq;
+                    otherFactor = num / sq;
+                    break;
+                }
+            }
+
+            const container = document.getElementById('radical-step-container');
+            
+            if (largestSquare === 1) {
+                const sqrtStr = katex.renderToString(`\\sqrt{${num}}`, { throwOnError: false });
+                container.innerHTML = `
+                    <div class="bg-amber-900/40 border border-amber-500/50 p-4 rounded-2xl text-center space-y-2">
+                        <div class="text-amber-300 font-bold text-lg flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Akar Paling Sederhana</span>
+                        </div>
+                        <p class="text-sm text-amber-100">
+                            Bilangan ${sqrtStr} tidak memiliki faktor kuadrat sempurna (selain 1).
+                        </p>
+                    </div>
+                `;
+            } else {
+                const rootSquare = Math.sqrt(largestSquare);
+                const isPerfect = (otherFactor === 1);
+
+                const step1Expr = `\\sqrt{${num}} = \\sqrt{${largestSquare} \\times ${otherFactor}}`;
+                const step2Expr = `= \\sqrt{${largestSquare}} \\times \\sqrt{${otherFactor}}`;
+                const finalExpr = isPerfect ? `= ${rootSquare}` : `= ${rootSquare}\\sqrt{${otherFactor}}`;
+
+                const step1Rendered = katex.renderToString(step1Expr, { throwOnError: false, displayMode: true });
+                const step2Rendered = katex.renderToString(step2Expr, { throwOnError: false, displayMode: true });
+                const finalRendered = katex.renderToString(finalExpr, { throwOnError: false, displayMode: true });
+                const titleRendered = katex.renderToString(`\\sqrt{${num}}`, { throwOnError: false });
+
+                let html = `
+                    <div class="space-y-4">
+                        <div class="text-center pb-2 border-b border-indigo-800 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-square-root-variable text-amber-400 text-lg"></i>
+                            <span class="text-xs text-indigo-200 uppercase font-extrabold tracking-wider">Langkah-Langkah Pemfaktoran ${titleRendered}</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Step 1 Card -->
+                            <div class="bg-indigo-900/90 border border-indigo-700 p-4 rounded-2xl text-center space-y-2 shadow-md">
+                                <span class="bg-indigo-700 text-indigo-200 text-[11px] font-black px-3 py-1 rounded-full uppercase">Langkah 1</span>
+                                <p class="text-xs text-indigo-200 font-semibold">Faktor Kuadrat Sempurna Terbesar</p>
+                                <div class="text-amber-300 font-bold py-2 overflow-x-auto">${step1Rendered}</div>
+                                <div class="text-[11px] text-slate-300 bg-indigo-950/60 p-2 rounded-xl">
+                                    Faktor kuadrat: <strong class="text-amber-300">${largestSquare}</strong> (${rootSquare}²)
+                                </div>
+                            </div>
+
+                            <!-- Step 2 Card -->
+                            <div class="bg-indigo-900/90 border border-indigo-700 p-4 rounded-xl text-center space-y-2 shadow-md">
+                                <span class="bg-indigo-700 text-indigo-200 text-[11px] font-black px-3 py-1 rounded-full uppercase">Langkah 2</span>
+                                <p class="text-xs text-indigo-200 font-semibold">Pisahkan Perkalian Akar</p>
+                                <div class="text-indigo-100 font-bold py-2 overflow-x-auto">${step2Rendered}</div>
+                                <div class="text-[11px] text-slate-300 bg-indigo-950/60 p-2 rounded-xl">
+                                    Gunakan sifat: <span class="text-amber-200 font-semibold">√(a×b) = √a × √b</span>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 Card (Final Result) -->
+                            <div class="bg-emerald-950/90 border-2 border-emerald-500/80 p-4 rounded-xl text-center space-y-2 shadow-xl">
+                                <span class="bg-emerald-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase">Hasil Akhir Sederhana</span>
+                                <p class="text-xs text-emerald-200 font-semibold">Hitung Nilai Akar Sempurna</p>
+                                <div class="text-emerald-300 font-black py-2 overflow-x-auto">${finalRendered}</div>
+                                <div class="text-[11px] text-emerald-200 bg-emerald-900/50 p-2 rounded-xl">
+                                    Karena <strong class="text-white">√${largestSquare} = ${rootSquare}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = html;
+            }
+        }
+
+        // ==========================================
+        // MODUL 3: MERASIONALKAN LOGIC
+        // ==========================================
+        function updateRasionalForm1() {
+            const a = parseInt(document.getElementById('rasional-a').value) || 1;
+            const b = parseInt(document.getElementById('rasional-b').value) || 2;
+
+            const stepContainer = document.getElementById('rasional-step-output');
+            
+            const gcd = (x, y) => y === 0 ? x : gcd(y, x % y);
+            const common = gcd(a, b);
+
+            const numCoeff = a / common;
+            const denCoeff = b / common;
+
+            let finalStr = "";
+            if (denCoeff === 1) {
+                finalStr = `${numCoeff === 1 ? '' : numCoeff}\\sqrt{${b}}`;
+            } else {
+                finalStr = `\\frac{${numCoeff === 1 ? '' : numCoeff}\\sqrt{${b}}}{${denCoeff}}`;
+            }
+
+            const expr = `\\frac{${a}}{\\sqrt{${b}}} \\times \\frac{\\sqrt{${b}}}{\\sqrt{${b}}} = \\frac{${a}\\sqrt{${b}}}{${b}} = ${finalStr}`;
+            katex.render(expr, stepContainer);
+        }
+
+        // ==========================================
+        // MODUL 4: BENTUK BAKU SIMPLIFIER
+        // ==========================================
+        function setBakuPreset(val) {
+            playClick();
+            formatScientificNotation(val);
+        }
+
+        function formatScientificNotation(num) {
+            document.getElementById('baku-raw-number').innerText = num.toLocaleString('id-ID', { maximumFractionDigits: 10 });
+            
+            let exp = 0;
+            let a = num;
+
+            if (Math.abs(num) >= 10) {
+                while (Math.abs(a) >= 10) {
+                    a /= 10;
+                    exp++;
+                }
+            } else if (Math.abs(num) < 1 && Math.abs(num) > 0) {
+                while (Math.abs(a) < 1) {
+                    a *= 10;
+                    exp--;
+                }
+            }
+
+            const roundedA = Math.round(a * 1000) / 1000;
+            const outputEl = document.getElementById('baku-scientific-output');
+            katex.render(`${roundedA} \\times 10^{${exp}}`, outputEl);
+
+            const expl = document.getElementById('baku-explanation');
+            if (exp > 0) {
+                expl.innerText = `Koma desimal digeser ke KIRI sebanyak ${exp} langkah, sehingga eksponen 10 bernilai positif (+${exp}).`;
+            } else {
+                expl.innerText = `Koma desimal digeser ke KANAN sebanyak ${Math.abs(exp)} langkah, sehingga eksponen 10 bernilai negatif (${exp}).`;
+            }
+        }
+
+        // ==========================================
+        // MODUL 5: GAME MATCH CARD (DYNAMIC QUESTION GENERATOR)
+        // ==========================================
+        let selectedQuestion = null;
+        let matchScore = 0;
+
+        // EXPANDED DYNAMIC QUESTION BANK FOR MATCH CARD GAME
+        const matchMasterPool = [
+            { q: "\\sqrt{72}", a: "6\\sqrt{2}" },
+            { q: "\\sqrt{48}", a: "4\\sqrt{3}" },
+            { q: "\\sqrt{50}", a: "5\\sqrt{2}" },
+            { q: "\\sqrt{108}", a: "6\\sqrt{3}" },
+            { q: "\\sqrt{98}", a: "7\\sqrt{2}" },
+            { q: "\\sqrt{80}", a: "4\\sqrt{5}" },
+            { q: "\\frac{6}{\\sqrt{3}}", a: "2\\sqrt{3}" },
+            { q: "\\frac{10}{\\sqrt{5}}", a: "2\\sqrt{5}" },
+            { q: "\\frac{12}{\\sqrt{6}}", a: "2\\sqrt{6}" },
+            { q: "2^3 \\times 2^4", a: "2^7 = 128" },
+            { q: "3^{-2}", a: "\\frac{1}{9}" },
+            { q: "16^{\\frac{1}{2}}", a: "4" },
+            { q: "25^{\\frac{1}{2}}", a: "5" },
+            { q: "3\\sqrt{2} + 4\\sqrt{2}", a: "7\\sqrt{2}" },
+            { q: "5\\sqrt{3} - 2\\sqrt{3}", a: "3\\sqrt{3}" },
+            { q: "350.000", a: "3,5 \\times 10^5" },
+            { q: "0,00045", a: "4,5 \\times 10^{-4}" }
+        ];
+
+        function setGameMode(mode) {
+            playClick();
+            document.querySelectorAll('.game-view').forEach(v => v.classList.add('hidden'));
+            if (mode === 'match') {
+                document.getElementById('game-view-match').classList.remove('hidden');
+                document.getElementById('btn-game-match').className = 'touch-btn bg-white text-slate-900 font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm';
+                document.getElementById('btn-game-race').className = 'touch-btn bg-slate-800 hover:bg-slate-900 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm';
+                initMatchGame();
+            } else {
+                document.getElementById('game-view-race').classList.remove('hidden');
+                document.getElementById('btn-game-match').className = 'touch-btn bg-slate-800 hover:bg-slate-900 text-white font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm';
+                document.getElementById('btn-game-race').className = 'touch-btn bg-white text-slate-900 font-extrabold px-4 py-2.5 rounded-xl shadow-md text-sm';
+                resetRaceGame();
+            }
+        }
+
+        function initMatchGame() {
+            playClick();
+            matchScore = 0;
+            selectedQuestion = null;
+            
+            // Pick 4 RANDOM questions from master pool every time!
+            const shuffledPool = [...matchMasterPool].sort(() => Math.random() - 0.5);
+            const currentPairs = shuffledPool.slice(0, 4).map((item, idx) => ({ id: idx + 1, ...item }));
+
+            document.getElementById('match-score').innerText = `0 / ${currentPairs.length}`;
+
+            const qContainer = document.getElementById('match-questions-container');
+            const aContainer = document.getElementById('match-answers-container');
+
+            qContainer.innerHTML = '';
+            aContainer.innerHTML = '';
+
+            const shuffledAnswers = [...currentPairs].sort(() => Math.random() - 0.5);
+
+            currentPairs.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'touch-btn q-card w-full p-4 bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-500 rounded-2xl text-center font-bold text-lg text-indigo-900 shadow-sm flex items-center justify-between';
+                btn.dataset.id = item.id;
+                btn.innerHTML = `<span class="katex-render" data-expr="${item.q}"></span> <i class="fa-regular fa-circle text-indigo-400"></i>`;
+                btn.onclick = () => selectMatchQuestion(btn, item.id);
+                qContainer.appendChild(btn);
+            });
+
+            shuffledAnswers.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'touch-btn a-card w-full p-4 bg-emerald-50 border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl text-center font-bold text-lg text-emerald-900 shadow-sm';
+                btn.dataset.id = item.id;
+                btn.innerHTML = `<span class="katex-render" data-expr="${item.a}"></span>`;
+                btn.onclick = () => selectMatchAnswer(btn, item.id);
+                aContainer.appendChild(btn);
+            });
+
+            renderKaTeX();
+        }
+
+        function selectMatchQuestion(btn, id) {
+            playClick();
+            document.querySelectorAll('.q-card').forEach(c => {
+                if (!c.disabled) {
+                    c.classList.remove('border-indigo-600', 'bg-indigo-100', 'ring-2', 'ring-indigo-400');
+                }
+            });
+            btn.classList.add('border-indigo-600', 'bg-indigo-100', 'ring-2', 'ring-indigo-400');
+            selectedQuestion = { btn, id };
+        }
+
+        function selectMatchAnswer(ansBtn, ansId) {
+            if (!selectedQuestion) return;
+
+            if (selectedQuestion.id === ansId) {
+                playCorrect();
+                selectedQuestion.btn.className = 'w-full p-4 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-2xl text-center font-bold text-lg flex items-center justify-between opacity-70 cursor-not-allowed';
+                selectedQuestion.btn.innerHTML += ' <i class="fa-solid fa-circle-check text-emerald-600"></i>';
+                selectedQuestion.btn.disabled = true;
+
+                ansBtn.className = 'w-full p-4 bg-emerald-100 border-2 border-emerald-500 text-emerald-900 rounded-2xl text-center font-bold text-lg opacity-70 cursor-not-allowed';
+                ansBtn.disabled = true;
+
+                matchScore++;
+                document.getElementById('match-score').innerText = `${matchScore} / 4`;
+                selectedQuestion = null;
+
+                if (matchScore === 4) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+            } else {
+                playWrong();
+                ansBtn.classList.add('animate-shake', 'border-rose-500', 'bg-rose-50');
+                setTimeout(() => {
+                    ansBtn.classList.remove('animate-shake', 'border-rose-500', 'bg-rose-50');
+                }, 500);
+            }
+        }
+
+        // ==========================================
+        // GAME 2: SMARTBOARD BATTLE DUEL (2 PEMAIN)
+        // ==========================================
+        const raceMasterQuestions = [
+            { q: "Hasil dari 2^3 \\times 2^4 =", options: ["2^7", "2^{12}", "4^7", "2^1"], correct: 0 },
+            { q: "Bentuk sederhana dari \\sqrt{32} =", options: ["4\\sqrt{2}", "2\\sqrt{8}", "8\\sqrt{2}", "16\\sqrt{2}"], correct: 0 },
+            { q: "Nilai dari 5^0 + 7^0 =", options: ["2", "0", "12", "1"], correct: 0 },
+            { q: "Merasionalkan \\frac{6}{\\sqrt{3}} =", options: ["2\\sqrt{3}", "6\\sqrt{3}", "3\\sqrt{2}", "2"], correct: 0 },
+            { q: "Bentuk baku dari 4.500.000 =", options: ["4,5 \\times 10^6", "45 \\times 10^5", "0,45 \\times 10^7", "4,5 \\times 10^{-6}"], correct: 0 },
+            { q: "Nilai dari 36^{\\frac{1}{2}} =", options: ["6", "18", "12", "3"], correct: 0 },
+            { q: "Bentuk sederhana \\sqrt{75} =", options: ["5\\sqrt{3}", "3\\sqrt{5}", "25\\sqrt{3}", "15"], correct: 0 },
+            { q: "Hasil dari 3\\sqrt{2} + 5\\sqrt{2} =", options: ["8\\sqrt{2}", "8\\sqrt{4}", "15\\sqrt{2}", "2\\sqrt{2}"], correct: 0 },
+            { q: "Bentuk baku dari 0,000078 =", options: ["7,8 \\times 10^{-5}", "78 \\times 10^{-6}", "7,8 \\times 10^5", "0,78 \\times 10^{-4}"], correct: 0 },
+            { q: "Sifat eksponen \\frac{a^m}{a^n} =", options: ["a^{m-n}", "a^{m+n}", "a^{m \\times n}", "a^{n-m}"], correct: 0 }
+        ];
+
+        let raceQuestionsList = [];
+        let currentRaceIdx = 0;
+        let scoreRed = 0;
+        let scoreBlue = 0;
+        let duelTimerInterval = null;
+        let duelTimeLeft = 15;
+        let questionActive = false;
+
+        function resetRaceGame() {
+            playClick();
+            if (duelTimerInterval) clearInterval(duelTimerInterval);
+            
+            scoreRed = 0;
+            scoreBlue = 0;
+            currentRaceIdx = 0;
+
+            document.getElementById('score-red').innerText = '0';
+            document.getElementById('score-blue').innerText = '0';
+
+            // Shuffle full set of 10 questions
+            raceQuestionsList = [...raceMasterQuestions].sort(() => Math.random() - 0.5);
+
+            loadRaceQuestion();
+        }
+
+        function loadRaceQuestion() {
+            if (duelTimerInterval) clearInterval(duelTimerInterval);
+
+            if (currentRaceIdx >= raceQuestionsList.length) {
+                // Game Over - Show Winner Modal!
+                showDuelWinner();
+                return;
+            }
+
+            questionActive = true;
+            document.getElementById('duel-round-label').innerText = `Ronde ${currentRaceIdx + 1} / ${raceQuestionsList.length}`;
+
+            const q = raceQuestionsList[currentRaceIdx];
+            katex.render(q.q, document.getElementById('race-question-text'));
+
+            // Prepare answer options (Shuffled)
+            const options = q.options.map((opt, i) => ({ text: opt, isCorrect: i === q.correct }));
+            options.sort(() => Math.random() - 0.5);
+
+            // Populate Red Team Grid (Left Side)
+            const redGrid = document.getElementById('options-red-grid');
+            redGrid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'touch-btn bg-slate-800 hover:bg-rose-900/60 border-2 border-rose-500/40 p-4 rounded-xl text-center font-bold text-white shadow min-h-[70px] flex items-center justify-center';
+                btn.onclick = () => answerDuel('red', opt.isCorrect, btn);
+                redGrid.appendChild(btn);
+                katex.render(opt.text, btn);
+            });
+
+            // Populate Blue Team Grid (Right Side)
+            const blueGrid = document.getElementById('options-blue-grid');
+            blueGrid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'touch-btn bg-slate-800 hover:bg-sky-900/60 border-2 border-sky-500/40 p-4 rounded-xl text-center font-bold text-white shadow min-h-[70px] flex items-center justify-center';
+                btn.onclick = () => answerDuel('blue', opt.isCorrect, btn);
+                blueGrid.appendChild(btn);
+                katex.render(opt.text, btn);
+            });
+
+            // Start 15s timer
+            startDuelTimer();
+        }
+
+        function startDuelTimer() {
+            duelTimeLeft = 15;
+            const timerBar = document.getElementById('duel-timer-bar');
+            const timerText = document.getElementById('duel-timer-text');
+
+            timerBar.style.width = '100%';
+            timerText.innerText = `${duelTimeLeft}s`;
+
+            duelTimerInterval = setInterval(() => {
+                duelTimeLeft--;
+                timerText.innerText = `${duelTimeLeft}s`;
+                timerBar.style.width = `${(duelTimeLeft / 15) * 100}%`;
+
+                if (duelTimeLeft <= 0) {
+                    clearInterval(duelTimerInterval);
+                    playWrong();
+                    // Move to next question if time ran out
+                    currentRaceIdx++;
+                    setTimeout(loadRaceQuestion, 800);
+                }
+            }, 1000);
+        }
+
+        function answerDuel(team, isCorrect, btn) {
+            if (!questionActive) return;
+
+            if (isCorrect) {
+                questionActive = false; // Lock question so other player can't double tap
+                clearInterval(duelTimerInterval);
+                playCorrect();
+
+                if (team === 'red') {
+                    scoreRed += 100;
+                    document.getElementById('score-red').innerText = scoreRed;
+                    btn.className = 'w-full bg-emerald-600 border-2 border-emerald-400 p-4 rounded-xl text-center font-bold text-white shadow min-h-[70px] flex items-center justify-center';
+                    showFloatingScore('red');
+                } else {
+                    scoreBlue += 100;
+                    document.getElementById('score-blue').innerText = scoreBlue;
+                    btn.className = 'w-full bg-emerald-600 border-2 border-emerald-400 p-4 rounded-xl text-center font-bold text-white shadow min-h-[70px] flex items-center justify-center';
+                    showFloatingScore('blue');
+                }
+
+                currentRaceIdx++;
+                setTimeout(loadRaceQuestion, 1200);
+            } else {
+                playWrong();
+                btn.classList.add('bg-rose-600', 'border-rose-400', 'animate-shake');
+                btn.disabled = true;
+            }
+        }
+
+        function showFloatingScore(team) {
+            const el = document.getElementById(`float-score-${team}`);
+            if (el) {
+                el.classList.remove('hidden');
+                setTimeout(() => {
+                    el.classList.add('hidden');
+                }, 800);
+            }
+        }
+
+        function showDuelWinner() {
+            const modal = document.getElementById('winnerModal');
+            const title = document.getElementById('winner-title');
+            document.getElementById('final-score-red').innerText = scoreRed;
+            document.getElementById('final-score-blue').innerText = scoreBlue;
+
+            if (scoreRed > scoreBlue) {
+                title.innerText = "TIM MERAH MENANG! 🏆";
+                title.className = "text-3xl font-black text-rose-400 mt-1";
+            } else if (scoreBlue > scoreRed) {
+                title.innerText = "TIM BIRU MENANG! 🏆";
+                title.className = "text-3xl font-black text-sky-400 mt-1";
+            } else {
+                title.innerText = "HASIL SERI! 🤝";
+                title.className = "text-3xl font-black text-amber-300 mt-1";
+            }
+
+            modal.classList.remove('hidden');
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+        }
+
+        // ==========================================
+        // GENERAL UTILS
+        // ==========================================
+        function checkAnswer(btn, isCorrect, explanation) {
+            playClick();
+            const parent = btn.parentElement.parentElement;
+            const feedback = parent.querySelector('.quiz-feedback');
+            feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            if (isCorrect) {
+                playCorrect();
+                feedback.classList.add('bg-emerald-100', 'text-emerald-900', 'border', 'border-emerald-300');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> ${explanation}`;
+            } else {
+                playWrong();
+                feedback.classList.add('bg-rose-100', 'text-rose-900', 'border', 'border-rose-300');
+                feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 text-rose-600"></i> ${explanation}`;
+            }
+        }
+
+        function renderKaTeX() {
+            document.querySelectorAll('.katex-render').forEach(el => {
+                const expr = el.dataset.expr;
+                if (expr) {
+                    try {
+                        katex.render(expr, el, { throwOnError: false });
+                    } catch(e) {}
+                }
+            });
+        }
+
+        // INITIALIZATION ON WINDOW LOAD
+        window.onload = function() {
+            updatePangkatPositif();
+            updatePangkatPattern();
+            calculateRasional();
+            simplifyRadical(72);
+            updateRasionalForm1();
+            formatScientificNotation(350000000);
+            renderKaTeX();
+        }
+    </script>
+</body>
+</html>
